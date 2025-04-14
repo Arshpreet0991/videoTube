@@ -3,6 +3,18 @@
 ## AsyncHandler
 
 - we will be talking to DB a lot during the project and everytime we talk, we will have to use async await or promise .then .catch
+- we will be passing the callback function here, that we use to pass in the.
+
+- "The examples I saw before had regular callback functions. But when the callback is async, I need to deal with the promise it returns — and that’s where asyncHandler comes in."
+
+  ```javascript
+  app.get("/", (req, res) => {
+    // res.send("response")
+  });
+  ```
+
+  - The callback function above will be passed to the asyncHandler
+
 - To avoid repition, we are going to create an HOF which will take a function as an argument and wrap it in a try catch async await or promise .then .catch and return the wrapped function.
 
 - Async handler using try-catch async await
