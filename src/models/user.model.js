@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema(
     ],
     password: {
       type: String,
-      required: [true, "Password is required"],
+      required: [true, "Password is required"], // we can pass an array with condition and message
     },
     refreshToken: {
       type: String,
@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema(
 
 // encrypting the password using Hooks (pre)
 userSchema.pre("save", async function (next) {
-  if (!this.modified("password")) return next(); //exiting the function if the field being modified is anything other than password
+  if (!this.modified("password")) return next(); //exiting the function if the field being modified is anything other than password. Simply, if password is not modified, go straight to next()
   this.password = bcrypt.hash(this.password, 10); // encrypting the password. Two params, 1) what to encrypt 2) no. of rounds the algorithm takes to hash the password
   next(); // pass the next flag to next middleware
 });
@@ -69,8 +69,8 @@ userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
       _id: this._id, // getting from mongoose
-      email: this.email,
-      username: this.username,
+      // email: this.email,
+      // username: this.username,
     },
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
@@ -84,8 +84,8 @@ userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
       _id: this._id, // getting from mongoose
-      email: this.email,
-      username: this.username,
+      // email: this.email,
+      // username: this.username,
     },
     process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
