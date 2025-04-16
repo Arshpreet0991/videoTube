@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema(
 // encrypting the password using Hooks (pre)
 userSchema.pre("save", async function (next) {
   if (!this.modified("password")) return next(); //exiting the function if the field being modified is anything other than password. Simply, if password is not modified, go straight to next()
-  this.password = bcrypt.hash(this.password, 10); // encrypting the password. Two params, 1) what to encrypt 2) no. of rounds the algorithm takes to hash the password
+  this.password = await bcrypt.hash(this.password, 10); // encrypting the password. Two params, 1) what to encrypt 2) no. of rounds the algorithm takes to hash the password
   next(); // pass the next flag to next middleware
 });
 
