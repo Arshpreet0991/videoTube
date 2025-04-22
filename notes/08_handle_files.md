@@ -9,6 +9,7 @@
 
 - Multer is a middleware used for file uploads in Node.js with Express.
 - Multer gives us ability to upload single files and array of files.
+- Multer is also used to send form data.
 - Since multer is middleware, it is will be placed between our route and our controller. For example:
 
   ```javascript
