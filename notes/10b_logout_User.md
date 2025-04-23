@@ -1,7 +1,17 @@
 # Log out User
 
-- we will identify the user using our created middleware.
-- we will clear out cookies and set access token to _undefined_.
+### work flow
+
+- when the user sends a log-in request, in response, we assign refresh token and access token to the user in cookies.
+- refresh token is also stored in DB for future authentication.
+- So, now when the next time the user sends a request to the server, it will send the access and refresh token with each request.
+- now, when the user sends a log-out request, the tokens are sent along with this request in cookie-headers.
+- Now, we extract user id from the access token (stored in cookies).
+- To log out,
+
+  - we find the user using user id we got from access token.(using our middleware)
+  - then we delete the refresh token from the user's database. (setting it to undefined)
+  - then we clear out cookies which includes access token and refresh token saved on client side.
 
 1.  First we will creates routes in user.routes
 
