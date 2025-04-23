@@ -79,7 +79,7 @@ userSchema.methods.generateAccessToken = function () {
 
 // generate refresh token - long lived token
 
-userSchema.methods.generateAccessToken = function () {
+userSchema.methods.generateRefreshToken = function () {
   // Long lived access token
   return jwt.sign(
     {
