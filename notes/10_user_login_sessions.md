@@ -27,8 +27,8 @@
 2.  find user in DB
 3.  check user's password
 4.  generate access and refresh toke
-5.  send the tokens in cookies
-6.  send back the response.
+5.  send the tokens using cookies, inside a response
+6.  set up log out
 
 ### Step 0: create a function for user login in user controller
 
@@ -145,3 +145,57 @@ const userLogin = asynchHandler(async (req, res, next) => {
     ```
 
   - we are also removing important fields from the user object, so that we dont send sensetive info in our cookies.
+  - we can also update our old reference "user" manually if we dont want to make an additional query to DB. It depends on our application.
+
+    ```javascript
+    user.refreshToken = refreshToken;
+    // Now user has updated value in memory (but DB already had it)
+    ```
+
+### Step 5: Send tokens in cookies
+
+- Whenever we want to send cookies, we have to set up some options for our cookies.
+- For that, we will create an object called options
+
+  ```javascript
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  ```
+
+  - By default, cookies can be modified by both front-end and back-end.
+  - By using httpOnly and secure, we restrict the cookies to be updated by the front end.
+  - Only server is allowed to modify cookies.
+
+- To send tokens in cookies, we will send a response back, and in that response,cookies will be added.
+
+  ```javascript
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options) // ("key",value,options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      // response Data
+      new ApiResponse(
+        200,
+        {
+          user: loggedInUser,
+          accesToken,
+          refreshToken,
+        },
+        "User logged in Successfully"
+      )
+    );
+  ```
+
+  - We are sending tokens in cookies and in json response as well. This is because:
+    - Cookies: ✅ for browser-based auth (e.g., automatic session handling).
+    - JSON response: ✅ for flexibility, dev tools, and client-side control (e.g., a mobile app might prefer localStorage).
+
+### Set up logout
+
+- for logging out the user, we need to follow certain steps:
+  - delete cookies
+  - delete refresh token from DB
+  - we will design our own middleware to do this.

@@ -129,5 +129,58 @@ const loginUser = asyncHandler(async (req, res, next) => {
     "-password -refresToken"
   );
   // 5. send tokens in cookies
+
+  // set up cookie options
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new ApiResponse(
+        200,
+        {
+          user: loggedInUser,
+          accessToken,
+          refreshToken,
+        },
+        "User logged in Successfully"
+      )
+    );
 }); // login user
-export { registerUser };
+
+const logoutUser = asyncHandler(async (req, res) => {
+  const userId = req.user._id; // get user id
+
+  // find user and update the details specified in the object using set operator of mongo
+  await User.findByIdAndUpdate(
+    userId,
+    {
+      $set: {
+        refreshToken: undefined,
+      },
+    },
+    {
+      new: true, //
+    }
+  );
+
+  // clear cookies
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  // clear cookies from response
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User logged out"));
+}); // logout user
+export { registerUser, loginUser, logoutUser };
