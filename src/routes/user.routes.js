@@ -5,6 +5,10 @@ import {
   refreshAccessToken,
   registerUser,
   changeCurrentPassword,
+  getCurrentUser,
+  updateAccountDetails,
+  updateUserAvatar,
+  updateUserCoverImage,
 } from "../controllers/user.controllers.js";
 
 import { upload } from "../middlewares/multer.middlewares.js";
@@ -27,6 +31,8 @@ router.route("/login").post(loginUser);
 // secured route
 router.route("/logout").post(verifyJWT, logoutUser); // add middleware for identify user securely
 router.route("/refresh-token").post(refreshAccessToken); // issue new tokens
-router.route("/changePassword").post(verifyJWT, changeCurrentPassword); // change current password
+router.route("/change-password").post(verifyJWT, changeCurrentPassword); // change current password
+router.route("/get-current-user").post(verifyJWT, getCurrentUser); // change current password
+router.route("/update-user-details").post(verifyJWT, getCurrentUser); // change current password
 
 export default router;
