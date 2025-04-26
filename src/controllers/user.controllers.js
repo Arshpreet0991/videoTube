@@ -18,7 +18,7 @@ const generateAccessTokenAndRefreshTokens = async (userId) => {
 
     // generate tokens
     const accessToken = user.generateAccessToken();
-    const refreshToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
 
     // add refresh token to user object
     user.refreshToken = refreshToken;
@@ -108,8 +108,6 @@ const loginUser = asyncHandler(async (req, res, next) => {
   //1. get user data
   const { username, email, password } = req.body;
 
-  console.log("Email:", email);
-
   if (!(username || email)) {
     throw new ApiError(400, "username or email required ");
   }
@@ -157,7 +155,7 @@ const loginUser = asyncHandler(async (req, res, next) => {
 }); // login user
 
 const logoutUser = asyncHandler(async (req, res) => {
-  const userId = req.user._id; // get user id
+  const userId = req.user?._id; // get user id
 
   // find user and update the details specified in the object using set operator of mongo
   await User.findByIdAndUpdate(
@@ -182,8 +180,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
   // access refresh token from cookies
-  const incomingRefreshToken =
-    req.cookies.refreshToken || req.body.refreshToken;
+  const incomingRefreshToken = req.cookies.refreshToken;
 
   if (!incomingRefreshToken) {
     throw new ApiError(401, "unauthorized request");
@@ -209,9 +206,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       throw new ApiError(401, "Refresh token is expired/used");
     }
 
-    const { newAccessToken, newRefreshToken } =
+    const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
       await generateAccessTokenAndRefreshTokens(user._id);
-
     return res
       .status(200)
       .cookie("accessToken", newAccessToken, options)
@@ -219,7 +215,10 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(
           200,
-          { newAccessToken, newRefreshToken },
+          {
+            newAccessToken,
+            refreshToken: newRefreshToken,
+          },
           "Access token refreshed successfully"
         )
       );
