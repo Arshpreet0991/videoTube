@@ -32,7 +32,7 @@ router.route("/login").post(loginUser);
 router.route("/logout").post(verifyJWT, logoutUser); // add middleware for identify user securely
 router.route("/refreshtoken").post(refreshAccessToken); // issue new tokens
 router.route("/change-password").post(verifyJWT, changeCurrentPassword); // change current password
-router.route("/get-current-user").post(verifyJWT, getCurrentUser); // change current password
+router.route("/get-current-user").get(verifyJWT, getCurrentUser); // change current password
 router.route("/update-user-details").post(verifyJWT, getCurrentUser); // change current password
 
 export default router;
