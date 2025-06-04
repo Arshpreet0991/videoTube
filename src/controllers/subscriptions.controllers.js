@@ -5,8 +5,8 @@ import { Subscription } from "../models/subscription.model.js";
 
 // subscribe to channel
 const subscribeToChannel = asyncHandler(async (req, res) => {
-  const { userId } = req.user;
-  const { channelId } = req.body;
+  const userId = req.user?._id;
+  const { channelId } = req.params;
 
   if (!userId) {
     throw new ApiError(400, "subscriber id not found");
@@ -46,8 +46,8 @@ const subscribeToChannel = asyncHandler(async (req, res) => {
 
 // unsubscribe from channel
 const unSubscribeFromChannel = asyncHandler(async (req, res) => {
-  const { userId } = req.user;
-  const { channelId } = req.body;
+  const userId = req.user?._id;
+  const { channelId } = req.params;
 
   if (!userId) {
     throw new ApiError(400, "subscriber id not found");
@@ -73,4 +73,32 @@ const unSubscribeFromChannel = asyncHandler(async (req, res) => {
     );
 });
 
-export { subscribeToChannel };
+// Check subscribe Status
+const checkSubscribeStatus = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+  const { channelId } = req.params;
+
+  if (!userId) {
+    throw new ApiError(400, "subscriber id not found");
+  }
+
+  if (!channelId) {
+    throw new ApiError(400, "channel id not found");
+  }
+
+  const isSubscribed = await Subscription.exists({
+    subscriber: userId,
+    channel: channelId,
+  });
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      { isSubscribed: !!isSubscribed },
+      "Subscription Status fetched"
+    )
+    // .exists checks wheater a document exists or not. If it exists it returns a truthy , otherwise it returns a null. Now to convert that into a booleam, we use !!isSubscribed.
+  );
+});
+
+export { subscribeToChannel, unSubscribeFromChannel, checkSubscribeStatus };

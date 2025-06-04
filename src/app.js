@@ -30,20 +30,21 @@ app.use(cookieParser());
 //-----------------------------------------
 
 // ROUTES
-// import routes
-import healthcheckRouter from "./routes/healthcheck.routes.js"; // healthcheck
-import userRouter from "./routes/user.routes.js"; // user route
 
 // Healthcheck route
+import healthcheckRouter from "./routes/healthcheck.routes.js"; // healthcheck
 app.use("/api/v1/healthcheck", healthcheckRouter);
 
 // User Route
+import userRouter from "./routes/user.routes.js"; // user route
 app.use("/api/v1/users", userRouter);
 
-//-------------------------------------------------
 // Videos route
 import videoRouter from "./routes/videos.routes.js";
-
 app.use("/api/v1/videos", videoRouter);
+
+// Subscriber Route
+import subscriptionRouter from "./routes/subscription.routes.js"; // subscriber route
+app.use("/api/v1/subscription", subscriptionRouter);
 
 export { app };
