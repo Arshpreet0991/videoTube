@@ -47,4 +47,8 @@ app.use("/api/v1/videos", videoRouter);
 import subscriptionRouter from "./routes/subscription.routes.js"; // subscriber route
 app.use("/api/v1/subscription", subscriptionRouter);
 
+// Comments Route
+import commentRouter from "./routes/comments.routes.js";
+app.use("/api/v1/comments", commentRouter);
+
 export { app };

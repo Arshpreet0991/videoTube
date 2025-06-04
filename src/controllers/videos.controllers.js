@@ -84,6 +84,9 @@ const updateVideoTitleAndDescription = asyncHandler(async (req, res) => {
     {
       title,
       description,
+    },
+    {
+      new: true,
     }
   );
 
@@ -112,6 +115,9 @@ const updateVideoThumbnail = asyncHandler(async (req, res) => {
     { _id: videoId, owner: userId },
     {
       thumbnail: cloudinaryThumbnail.url,
+    },
+    {
+      new: true,
     }
   );
 
