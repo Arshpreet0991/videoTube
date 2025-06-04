@@ -40,4 +40,10 @@ app.use("/api/v1/healthcheck", healthcheckRouter);
 // User Route
 app.use("/api/v1/users", userRouter);
 
+//-------------------------------------------------
+// Videos route
+import videoRouter from "./routes/videos.routes.js";
+
+app.use("/api/v1/videos", videoRouter);
+
 export { app };

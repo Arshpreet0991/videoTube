@@ -10,6 +10,7 @@
 - Multer is a middleware used for file uploads in Node.js with Express.
 - Multer gives us ability to upload single files and array of files.
 - Multer is also used to send form data.
+
 - Since multer is middleware, it is will be placed between our route and our controller. For example:
 
   ```javascript
@@ -23,6 +24,22 @@
   - "/profile" is route
   - upload.single is multer middleware. Upload is provided my multer.
   - function (req,res,next) is controller
+
+## VERY IMPORTANT
+
+### Multer Notes
+
+Multer middleware processes the uploaded file and saves it locally before the route handler runs. It attaches the uploaded file’s info to `req.file` for single file uploads.
+
+**`req.file` contains:**
+
+- `path` — local file path (where Multer saved the file)
+- `originalname` — original file name from user’s device
+- `mimetype` — file type (e.g., `image/jpeg`)
+- `size` — file size in bytes
+- Other metadata like `filename`, `destination`, etc.
+
+Use `req.file.path` to access the local file path for further processing (e.g., upload to Cloudinary).
 
 ## System Flow for File Uploading
 
@@ -43,8 +60,10 @@
     cb(null, '/tmp/my-uploads') // path of the storage folder
     },
     filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() \* 1E9) // create unique suffix for our files
-    cb(null, file.fieldname + '-' + uniqueSuffix) //create our own unique file name
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() \* 1E9)
+    // create unique suffix for our files
+    cb(null, file.fieldname + '-' + uniqueSuffix)
+    //create our own unique file name
     }
     })
 
@@ -92,19 +111,69 @@
     ```javascript
     const uploadOnCloudinary = async (localFilePath) => {
       try {
-        if (!localFilePath) return null; // if there is no local path, return null
+        if (!localFilePath) return null;
+        // if there is no local path, return null
         const response = await cloudinary.uploader.upload(localFilePath, {
-          resource_type: "auto", // automatically detect the file type
+          resource_type: "auto",
+          // automatically detect the file type
         }); // upload to cloudinary
         console.log("File uploaded on cloudinary. File src: " + response.url);
         // once the file is uploaded we would like to delete from our server
         fs.unlinkSync(localFilePath);
         return response;
       } catch (error) {
-        fs.unlinkSync(localFilePath); // if there is an error, delete the file from the local storage
+        fs.unlinkSync(localFilePath);
+        // if there is an error, delete the file from the local storage
         return null;
       }
     };
 
     export { uploadOnCloudinary };
     ```
+
+### req.file preview sent by multer
+
+- if it is req.files, then multer will give us an array of objects, like previously discussed.
+
+```js
+  req.file:  {
+  fieldname: 'avatar',
+  originalname: '9.jpg',
+  encoding: '7bit',
+  mimetype: 'image/jpeg',
+  destination: './public/temp',
+  filename: 'avatar-1747954043858-320320571',
+  path: 'public\\temp\\avatar-1747954043858-320320571',
+  size: 2489221
+}
+```
+
+### cloudinary response preview:
+
+- this is the response sent by uploadTocloudinary method.
+
+```js
+  cloudinary response:  {
+  asset_id: 'fd005ff4760d3fe61a49e5d44842c829',
+  public_id: 'p9c103lvcxdsuowe420h',
+  version: 1747954047,
+  version_id: '518f7a70d6643831dafda6e1e9ac767d',
+  signature: '03b762526c9bbae2d728dda7972dfd5bc681f8d7',
+  width: 2325,
+  height: 2325,
+  format: 'jpg',
+  resource_type: 'image',
+  created_at: '2025-05-22T22:47:27Z',
+  tags: [],
+  bytes: 2489221,
+  type: 'upload',
+  etag: '5838eb5d42634845d254ad9ac0084df2',
+  placeholder: false,
+  url: 'http://res.cloudinary.com/dvezraqky/image/upload/v1747954047/p9c103lvcxdsuowe420h.jpg',
+  secure_url: 'https://res.cloudinary.com/dvezraqky/image/upload/v1747954047/p9c103lvcxdsuowe420h.jpg',
+  asset_folder: '',
+  display_name: 'p9c103lvcxdsuowe420h',
+  original_filename: 'avatar-1747954043858-320320571',
+  api_key: '355666617196797'
+}
+```

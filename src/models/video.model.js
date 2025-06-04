@@ -7,15 +7,15 @@ const videoSchema = new mongoose.Schema(
       required: true,
     },
     thumbnail: {
-      String, // external cloudinary url
+      type: String, // external cloudinary url
       required: true,
     },
     title: {
-      String,
+      type: String,
       required: true,
     },
     description: {
-      String,
+      type: String,
       required: true,
     },
     duration: {
@@ -27,7 +27,7 @@ const videoSchema = new mongoose.Schema(
       default: 0,
     },
     isPublished: {
-      type: boolean,
+      type: Boolean,
       default: true,
     },
     owner: {
