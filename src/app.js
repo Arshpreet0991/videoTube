@@ -51,4 +51,8 @@ app.use("/api/v1/subscription", subscriptionRouter);
 import commentRouter from "./routes/comments.routes.js";
 app.use("/api/v1/comments", commentRouter);
 
+// Likes routes
+import likesRouter from "./routes/likes.routes.js";
+app.use("/api/v1/likes", likesRouter);
+
 export { app };
